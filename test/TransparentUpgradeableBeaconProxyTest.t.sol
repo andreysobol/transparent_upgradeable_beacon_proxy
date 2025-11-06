@@ -16,8 +16,6 @@ import {UpgradeableBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/U
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {ERC1967Utils} from "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Utils.sol";
 
-import {console} from "forge-std/console.sol";
-
 import {BeaconProxyAdmin} from "../src/BeaconProxyAdmin.sol";
 
 contract TransparentUpgradeableBeaconProxyTest is Test {
