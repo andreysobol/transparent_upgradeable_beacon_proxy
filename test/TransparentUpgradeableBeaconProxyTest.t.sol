@@ -57,10 +57,9 @@ contract TransparentUpgradeableBeaconProxyTest is Test {
 
     function testRestrictionOnUpgrade() public {
         vm.expectRevert();
-        ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy))
-            .upgradeBeaconToAndCall(
-                address(sayHelloImplementation), abi.encodeWithSelector(sayHelloImplementation.initializeHello.selector)
-            );
+        ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)).upgradeBeaconToAndCall(
+            address(sayHelloImplementation), abi.encodeWithSelector(sayHelloImplementation.initializeHello.selector)
+        );
     }
 
     function test_proxyAdminShallNotPass() public {
@@ -82,12 +81,11 @@ contract TransparentUpgradeableBeaconProxyTest is Test {
         address proxyAdmin = _getProxyAdmin();
 
         vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, address(this)));
-        BeaconProxyAdmin(address(proxyAdmin))
-            .upgradeBeaconToAndCall(
-                ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)),
-                address(sayHelloImplementation),
-                abi.encodeWithSelector(sayHelloImplementation.initializeHello.selector)
-            );
+        BeaconProxyAdmin(address(proxyAdmin)).upgradeBeaconToAndCall(
+            ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)),
+            address(sayHelloImplementation),
+            abi.encodeWithSelector(sayHelloImplementation.initializeHello.selector)
+        );
     }
 
     function test_proxyAdminCanTransferOwnership() public {
@@ -104,12 +102,11 @@ contract TransparentUpgradeableBeaconProxyTest is Test {
         UpgradeableBeacon beacon = new UpgradeableBeacon(address(sayHelloImplementation), owner);
 
         vm.prank(owner);
-        BeaconProxyAdmin(address(proxyAdmin))
-            .upgradeBeaconToAndCall(
-                ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)),
-                address(beacon),
-                abi.encodeWithSelector(sayHelloImplementation.initializeHello.selector)
-            );
+        BeaconProxyAdmin(address(proxyAdmin)).upgradeBeaconToAndCall(
+            ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)),
+            address(beacon),
+            abi.encodeWithSelector(sayHelloImplementation.initializeHello.selector)
+        );
         assertEq(SayHello(address(transparentUpgradeableBeaconProxy)).sayHello(), "Hello");
     }
 
@@ -147,20 +144,18 @@ contract TransparentUpgradeableBeaconProxyTest is Test {
         UpgradeableBeacon beacon = new UpgradeableBeacon(address(sayHelloImplementation), owner);
 
         vm.prank(owner);
-        BeaconProxyAdmin(address(_getProxyAdmin()))
-            .upgradeBeaconToAndCall(
-                ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)), address(beacon), ""
-            );
+        BeaconProxyAdmin(address(_getProxyAdmin())).upgradeBeaconToAndCall(
+            ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)), address(beacon), ""
+        );
         assertEq(SayHello(address(transparentUpgradeableBeaconProxy)).sayHello(), "Hey");
     }
 
     function test_invaliadBeaconUpgradeReverts() public {
         vm.expectRevert();
         vm.prank(owner);
-        BeaconProxyAdmin(address(_getProxyAdmin()))
-            .upgradeBeaconToAndCall(
-                ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)), address(this), ""
-            );
+        BeaconProxyAdmin(address(_getProxyAdmin())).upgradeBeaconToAndCall(
+            ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)), address(this), ""
+        );
     }
 
     function test_revertCreation() public {
@@ -177,21 +172,19 @@ contract TransparentUpgradeableBeaconProxyTest is Test {
         UpgradeableBeacon beacon = new UpgradeableBeacon(address(sayNothingButRevertImplementation), owner);
         vm.expectRevert(abi.encodeWithSelector(SayNothingButRevert.InitializeRevertError.selector));
         vm.prank(owner);
-        BeaconProxyAdmin(address(_getProxyAdmin()))
-            .upgradeBeaconToAndCall(
-                ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)),
-                address(beacon),
-                abi.encodeWithSelector(sayNothingButRevertImplementation.initializeSayNothingButRevert.selector)
-            );
+        BeaconProxyAdmin(address(_getProxyAdmin())).upgradeBeaconToAndCall(
+            ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)),
+            address(beacon),
+            abi.encodeWithSelector(sayNothingButRevertImplementation.initializeSayNothingButRevert.selector)
+        );
     }
 
     function test_functionForwardingRevert() public {
         UpgradeableBeacon beacon = new UpgradeableBeacon(address(sayNothingButRevertImplementation), owner);
         vm.prank(owner);
-        BeaconProxyAdmin(address(_getProxyAdmin()))
-            .upgradeBeaconToAndCall(
-                ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)), address(beacon), ""
-            );
+        BeaconProxyAdmin(address(_getProxyAdmin())).upgradeBeaconToAndCall(
+            ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)), address(beacon), ""
+        );
         vm.expectRevert(abi.encodeWithSelector(SayNothingButRevert.SayNothingButRevertError.selector));
         SayNothingButRevert(address(transparentUpgradeableBeaconProxy)).sayNothingButRevert();
     }

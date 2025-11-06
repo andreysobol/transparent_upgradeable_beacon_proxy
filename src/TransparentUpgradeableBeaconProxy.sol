@@ -5,11 +5,7 @@ import {IBeacon} from "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol
 import {Proxy} from "openzeppelin-contracts/contracts/proxy/Proxy.sol";
 import {ERC1967Utils} from "openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Utils.sol";
 import {BeaconProxyAdmin} from "./BeaconProxyAdmin.sol";
-import {IERC1967} from "openzeppelin-contracts/contracts/interfaces/IERC1967.sol";
-
-interface ITransparentUpgradeableBeaconProxy is IERC1967 {
-    function upgradeBeaconToAndCall(address newImplementation, bytes calldata data) external payable;
-}
+import {ITransparentUpgradeableBeaconProxy} from "./interfaces/ITransparentUpgradeableBeaconProxy.sol";
 
 contract TransparentUpgradeableBeaconProxy is Proxy {
     address private immutable ADMIN;
