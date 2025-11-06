@@ -25,17 +25,22 @@ contract TransparentUpgradeableBeaconProxyTest is Test {
     SayHello public sayHelloImplementation = new SayHello();
     PayableSayEther public payableSayEtherImplementation = new PayableSayEther();
     SayNothingButRevert public sayNothingButRevertImplementation = new SayNothingButRevert();
+    UpgradeableBeacon public oldBeacon;
 
     function setUp() public {
-        UpgradeableBeacon beacon = new UpgradeableBeacon(address(sayHeyImplementation), owner);
+        oldBeacon = new UpgradeableBeacon(address(sayHeyImplementation), owner);
 
         transparentUpgradeableBeaconProxy = new TransparentUpgradeableBeaconProxy(
-            address(beacon), owner, abi.encodeWithSelector(sayHeyImplementation.initializeHey.selector)
+            address(oldBeacon), owner, abi.encodeWithSelector(sayHeyImplementation.initializeHey.selector)
         );
     }
 
     function _getProxyAdmin() internal view returns (address) {
         return address(uint160(uint256(vm.load(address(transparentUpgradeableBeaconProxy), ERC1967Utils.ADMIN_SLOT))));
+    }
+
+    function _getBeacon() internal view returns (address) {
+        return address(uint160(uint256(vm.load(address(transparentUpgradeableBeaconProxy), ERC1967Utils.BEACON_SLOT))));
     }
 
     function test_initializationAndReadFunction() public view {
@@ -101,12 +106,20 @@ contract TransparentUpgradeableBeaconProxyTest is Test {
 
         UpgradeableBeacon beacon = new UpgradeableBeacon(address(sayHelloImplementation), owner);
 
+        assertEq(_getBeacon(), address(oldBeacon));
+        assertEq(oldBeacon.implementation(), address(sayHeyImplementation));
+
         vm.prank(owner);
         BeaconProxyAdmin(address(proxyAdmin)).upgradeBeaconToAndCall(
             ITransparentUpgradeableBeaconProxy(address(transparentUpgradeableBeaconProxy)),
             address(beacon),
             abi.encodeWithSelector(sayHelloImplementation.initializeHello.selector)
         );
+
+        assertNotEq(address(oldBeacon), address(beacon));
+        assertNotEq(address(sayHelloImplementation), address(sayHeyImplementation));
+        assertEq(_getBeacon(), address(beacon));
+        assertEq(beacon.implementation(), address(sayHelloImplementation));
         assertEq(SayHello(address(transparentUpgradeableBeaconProxy)).sayHello(), "Hello");
     }
 
