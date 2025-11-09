@@ -9,9 +9,9 @@ contract BeaconProxyAdmin is Ownable {
 
     function upgradeBeaconToAndCall(
         ITransparentUpgradeableBeaconProxy beaconProxy,
-        address implementation,
+        address beacon,
         bytes memory data
     ) public payable virtual onlyOwner {
-        beaconProxy.upgradeBeaconToAndCall{value: msg.value}(implementation, data);
+        beaconProxy.upgradeBeaconToAndCall{value: msg.value}(beacon, data);
     }
 }
